@@ -1,0 +1,9 @@
+# environment.yaml
+
+name: test-env
+dependencies:
+  - python=3.7
+  - anaconda
+  - pip
+  - pip:
+      - -r file:/Users/anushmutyala/Documents/GitHub/provider/requirements_dev.txt
