@@ -76,7 +76,7 @@ def deploy_contract(w3, _json, private_key, *args):
 
 
 def get_ocean_token_address(web3: Web3) -> HexAddress:
-    return get_contract_address(get_config().address_file, "Ocean", 8996)
+    return get_contract_address(get_config().address_file, contract_name="Ocean", chain_id=4)
 
 
 def deploy_data_nft(
@@ -223,13 +223,13 @@ def get_registered_asset(
         build_credentials_dict() if not custom_credentials else custom_credentials
     )
 
-    chain_id = 8996
+    chain_id = 4
     did = compute_did_from_data_nft_address_and_chain_id(data_nft_address, chain_id)
     metadata = (
         build_metadata_dict_type_dataset() if not custom_metadata else custom_metadata
     )
     service_endpoint = (
-        "http://172.15.0.4:8030"
+        "http://127.0.0.1:8030"
         if not custom_service_endpoint
         else custom_service_endpoint
     )
@@ -268,11 +268,11 @@ def get_registered_asset(
     encrypted_ddo = ddo_bytes
     ddo_hash = sha256(ddo_bytes).hexdigest()
 
-    set_metadata(
+    resp = set_metadata(
         web3,
         data_nft_address,
         MetadataState.ACTIVE,
-        "http://172.15.0.4:8030",
+        "http://127.0.0.1:8030",
         from_wallet.address,
         Flags.PLAIN.to_byte(),
         encrypted_ddo,
@@ -280,7 +280,9 @@ def get_registered_asset(
         from_wallet,
     )
 
-    aqua_root = "http://172.15.0.5:5000"
+    print(resp)
+
+    aqua_root = "https://v4.aquarius.oceanprotocol.com"
     asset = wait_for_asset(aqua_root, did)
     assert asset, f"resolve did {did} failed."
 
@@ -339,7 +341,7 @@ def get_dataset_ddo_disabled(client, wallet):
     )
     _ = web3.eth.wait_for_transaction_receipt(txn_hash)
 
-    aqua_root = "http://172.15.0.5:5000"
+    aqua_root = "https://v4.aquarius.oceanprotocol.com"
     time.sleep(5)
     return asset, wait_for_asset(aqua_root, did)
 
